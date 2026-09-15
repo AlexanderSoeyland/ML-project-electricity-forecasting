@@ -1,0 +1,38 @@
+
+
+--------------------------------------------------
+For EDA: 
+
+For day_ahead_price, I would not interpolate it.
+ The target has 977 missing observations, 
+ but the gaps are short (maximum 9 hours). 
+ Simply remove those rows when constructing the final modelling dataset. 
+ You still retain well over 98% of your target observations.
+
+For load and hydro, interpolation is very reasonable. 
+The gaps are almost entirely 1–4 hours, so linear time interpolation should 
+introduce negligible distortion
+
+
+Wind is different, the wind results are:
+
+995 missing total
+largest gap = 742 hours ≈ 31 days
+second largest = 48 hours
+then 23, 23, 23 hours
+
+I would not interpolate the 742-hour gap. Linear interpolation over an entire month would
+ essentially invent a month's worth of wind forecasts, which is not defensible.
+Instead, only interpolate short wind gaps, for example up to 6 consecutive hours
+
+
+IMPORTANT: After cleaning the raw variables, 
+recalculate all lags from scratch, and save into a new dataset.csv.
+Don't use the lag columns currently saved in Datasets_ENTSOE/NO1_entsoe_hourly_2019_2025_resampled.csv
+
+Because the target price itself has gaps,
+price_lag_24h will sometimes be missing even when the current target isn't. 
+That's legitimate. I would not interpolate historical price yet; 
+we can decide whether to use another available lag or remove those observations.
+
+----------------------------------------------
