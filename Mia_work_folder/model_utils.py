@@ -15,6 +15,35 @@ DATA_PATH = (
 
 TARGET = "day_ahead_price"
 
+# Features shared by all models
+# Same-hour actual_load, hydro_run_of_river and hydro_reservoir are not known at forecast time, so they are left out
+# NOTE: the 24h lags of actual values are only partly known at forecast time (leakage), to be revisited
+NUMERIC_FEATURES = [
+    "load_forecast",
+    "wind_forecast",
+    "mean_temperature_NO1",
+    "price_lag_24h",
+    "price_lag_48h",
+    "price_lag_168h",
+    "actual_load_lag_24h",
+    "actual_load_lag_168h",
+    "hydro_run_of_river_lag_24h",
+    "hydro_run_of_river_lag_168h",
+    "hydro_reservoir_lag_24h",
+    "hydro_reservoir_lag_168h",
+    "temperature_lag_24h",
+    "temperature_lag_48h",
+    "temperature_lag_168h",
+]
+
+CATEGORICAL_FEATURES = [
+    "hour",
+    "day_of_week",
+    "month",
+]
+
+FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+
 
 def load_data(path=DATA_PATH):
 
@@ -51,17 +80,21 @@ def evaluate(y_true, y_pred, y_reference=None):
 
     # MAE:  mean absolute error, average size of the error in EUR/MWh
     # RMSE: root mean squared error, punishes large errors (price spikes) more than MAE
-    # R2:   share of the variance in the price explained by the model (1 is perfect)
+    # RSS:  residual sum of squares, the total squared error in (EUR/MWh)^2,
+    #       grows with the number of hours, so only compare it between models on the same set
+    # R2:   share of the variance in the price explained by the model (1 is perfect), R2 = 1 - RSS / TSS
     # rMAE: MAE relative to a reference forecast (daily naive), below 1 means better than the reference
 
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
     errors = y_true - y_pred
+    rss = np.sum(errors ** 2)
 
     scores = {
         "MAE": np.mean(np.abs(errors)),
         "RMSE": np.sqrt(np.mean(errors ** 2)),
-        "R2": 1 - np.sum(errors ** 2) / np.sum((y_true - y_true.mean()) ** 2),
+        "RSS": rss,
+        "R2": 1 - rss / np.sum((y_true - y_true.mean()) ** 2),
     }
 
     if y_reference is not None:
