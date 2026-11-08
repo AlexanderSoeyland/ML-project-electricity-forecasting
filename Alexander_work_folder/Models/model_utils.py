@@ -62,6 +62,12 @@ def load_data(path=DATA_PATH):
 
     return df
 
+def remove_2022(df): 
+    # removing all datapoints from 2002, as the electricity market was very different 
+    # in that year due to the covid pandemic and the war in Ukraine
+    # comparing performane with and without 2022 in the training set, 
+    # to see if it improves the model performance
+    return df[df["year"] != 2022]
 
 def split_data(df):
 
