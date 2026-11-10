@@ -115,9 +115,7 @@ def correlation_matrix_heatmap(df):
         raise KeyError("DataFrame must contain a 'timestamp' column or have a DatetimeIndex")
 
     # Select relevant numerical columns for correlation analysis
-    numerical_cols = ['day_ahead_price', 'load_forecast', 'actual_load', 
-                      'wind_forecast', 'hydro_run_of_river', 'hydro_reservoir', 
-                      'mean_temperature_NO1', 'residual_electricity_demand', 'historical_price_average', 'historical_price_volatility', 'hydropower_generation_share_168h_lag', 'heating_degree_indicator']
+    numerical_cols = ['day_ahead_price', 'residual_electricity_demand', 'historical_price_average', 'historical_price_volatility', 'hydropower_generation_share_168h_lag', 'heating_degree_indicator']
 
     # Calculate Pearson correlation matrix
     pearson_corr = df[numerical_cols].corr(method='pearson')
