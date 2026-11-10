@@ -16,6 +16,34 @@ import seaborn as sns
 # duplicates, missing values/counts/percentages,
 #  consecutive missing gaps, and basic descriptive statistics.
 
+def plot_missing_values(df):
+    """
+    Plots the missing values in the DataFrame as a bar chart.
+
+    Parameters:
+    - df: pandas DataFrame
+
+    Returns:
+    - None
+    """
+    # not including any lagged features as these are not orginal from dataset
+    missing_values = df.isnull().sum()
+    missing_values = missing_values[missing_values > 0].sort_values(ascending=False)
+    # removing all lagged features from the missing values plot
+    lagged_features = [col for col in missing_values.index if 'lag' in col]
+    missing_values = missing_values.drop(lagged_features, errors='ignore')
+    # also printing the missing values count on the bars for better visualization
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=missing_values.index, y=missing_values.values, palette='viridis')
+    for i, v in enumerate(missing_values.values):
+        plt.text(i, v + 0.5, str(v), ha='center', va='bottom')
+    plt.xticks(rotation=90)
+    plt.title('Missing Values Count by Feature')
+    plt.ylabel('Count of Missing Values')
+    plt.xlabel('Features')
+    plt.show()
+    # not including any lagged features as these are not orginal from dataset
+    
 
 
 

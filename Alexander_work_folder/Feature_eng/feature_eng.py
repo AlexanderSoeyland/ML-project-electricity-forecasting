@@ -99,4 +99,41 @@ def add_features(df):
 def save_feature_engineered_data(df, path):
     df.to_csv(path, index=False)
 
+import seaborn as sns
+
+
+def correlation_matrix_heatmap(df):
+    df = df.copy()
+
+    # Convert timestamp to datetime
+    if 'timestamp' in df.columns:
+        timestamps = pd.to_datetime(df.pop('timestamp'), utc=True)
+        df.index = timestamps
+    elif isinstance(df.index, pd.DatetimeIndex):
+        df.index = pd.to_datetime(df.index, utc=True)
+    else:
+        raise KeyError("DataFrame must contain a 'timestamp' column or have a DatetimeIndex")
+
+    # Select relevant numerical columns for correlation analysis
+    numerical_cols = ['day_ahead_price', 'load_forecast', 'actual_load', 
+                      'wind_forecast', 'hydro_run_of_river', 'hydro_reservoir', 
+                      'mean_temperature_NO1', 'residual_electricity_demand', 'historical_price_average', 'historical_price_volatility', 'hydropower_generation_share_168h_lag', 'heating_degree_indicator']
+
+    # Calculate Pearson correlation matrix
+    pearson_corr = df[numerical_cols].corr(method='pearson')
+
+    # Plot Pearson correlation heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(pearson_corr, annot=True, fmt=".2f", cmap='coolwarm', square=True)
+    plt.title('Pearson Correlation Matrix Heatmap')
+    plt.show()
+
+    # Calculate Spearman correlation matrix
+    spearman_corr = df[numerical_cols].corr(method='spearman')
+
+    # Plot Spearman correlation heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(spearman_corr, annot=True, fmt=".2f", cmap='coolwarm', square=True)
+    plt.title('Spearman Correlation Matrix Heatmap')
+    plt.show()
 
