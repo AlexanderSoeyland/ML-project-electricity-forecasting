@@ -157,7 +157,7 @@ def plot_price_through_time(df):
     plt.plot(df['timestamp'], df['day_ahead_price'], label='Hourly Price')
     plt.title('Hourly Day Ahead Price (2019-2025)')
     plt.xlabel('Time')
-    plt.ylabel('Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.legend()
     plt.show()
 
@@ -166,10 +166,10 @@ def plot_price_through_time(df):
     monthly_avg = df['day_ahead_price'].resample('M').mean()
     
     plt.figure(figsize=(15, 6))
-    monthly_avg.plot(label='Monthly Average Price', color='orange')
+    monthly_avg.plot(label='Monthly Average Price (EUR/MWh)', color='blue')
     plt.title('Monthly Average Day Ahead Price (2019-2025)')
     plt.xlabel('Time')
-    plt.ylabel('Average Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.legend()
     plt.show()
 
@@ -181,7 +181,7 @@ def plot_price_through_time(df):
     sns.boxplot(x='year', y='day_ahead_price', data=df)
     plt.title('Yearly Distribution of Day Ahead Price (2019-2025)')
     plt.xlabel('Year')
-    plt.ylabel('Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.show()
 
     # Printig the yearly descriptive statistics
@@ -214,9 +214,11 @@ def seasonality_and_calendar_patterns(df):
     hourly_avg.plot(kind='bar', color='skyblue')
     plt.title('Average Day Ahead Price by Hour of Day')
     plt.xlabel('Hour of Day')
-    plt.ylabel('Average Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.xticks(rotation=0)
     plt.show()
+    print("Average Day Ahead Price by Hour of Day:")
+    print(hourly_avg)
 
     # Average price by day of week
     daily_avg = df['day_ahead_price'].groupby(df.index.dayofweek).mean()
@@ -225,7 +227,7 @@ def seasonality_and_calendar_patterns(df):
     daily_avg.plot(kind='bar', color='lightgreen')
     plt.title('Average Day Ahead Price by Day of Week')
     plt.xlabel('Day of Week (0=Monday, 6=Sunday)')
-    plt.ylabel('Average Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.xticks(rotation=0)
     plt.show()
 
@@ -236,9 +238,11 @@ def seasonality_and_calendar_patterns(df):
     monthly_avg.plot(kind='bar', color='salmon')
     plt.title('Average Day Ahead Price by Month')
     plt.xlabel('Month')
-    plt.ylabel('Average Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.xticks(rotation=0)
     plt.show()
+    print("Average Day Ahead Price by Month:")
+    print(monthly_avg)
 
     # Average price by season
     seasons = {
@@ -260,7 +264,7 @@ def seasonality_and_calendar_patterns(df):
     season_avg.plot(kind='bar', color='lightcoral')
     plt.title('Average Day Ahead Price by Season')
     plt.xlabel('Season')
-    plt.ylabel('Average Day Ahead Price')
+    plt.ylabel('EUR/MWh')
     plt.xticks(rotation=0)
     plt.show()
 
